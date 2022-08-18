@@ -19,12 +19,20 @@ func returnAllArticle(w http.ResponseWriter, r *http.Request) {
 }
 
 // using the net/http
-func handleRequests() {
-  http.HandleFunc("/api", homePage) // the route of the page {{url:8081}/api}
-  http.HandleFunc("/api/article", returnAllArticle) // the route of the page {{url:8081}/api/article}
-  log.Fatal(http.ListenAndServe(":8081", nil))
-}
+// func handleRequests() {
+//   http.HandleFunc("/api", homePage) // the route of the page {{url:8081}/api}
+//   http.HandleFunc("/api/article", returnAllArticle) // the route of the page {{url:8081}/api/article}
+//   log.Fatal(http.ListenAndServe(":8081", nil))
+// }
 
+// using the gorilla/mux v2 
+func handleRequests() {
+  myRouter := mux.NewRouter().StrictSlash(true)
+  myRouter.HandleFunc("/api", homePage)
+  myRouter.HandleFunc("/api/article", returnAllArticle)
+
+  log.Fatal(http.ListenAndServe(":8081", myRouter))
+}
 
 type Article struct {
   Title string `json: "title"`
