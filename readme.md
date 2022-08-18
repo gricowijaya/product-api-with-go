@@ -21,4 +21,12 @@ go mod init <nameofyourproject/youraccountname>
 ```
 go mod tidy
 ```
+list of endpoint
 
+```
+/api/article
+/api/article/{id}
+/api/create-article
+/api/delete-article/{id}
+/api/update-article/{id}
+```
