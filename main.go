@@ -46,13 +46,33 @@ func createOneArticle(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteOneArticle(w http.ResponseWriter, r *http.Request) {
-  fmt.Fprintf(w, "Endpoint Hit Delete Article") // check if the endpoint is hitted
   vars := mux.Vars(r) // assign the returned variables from path into vars
   id := vars["id"] // get only the {id} from the route path
+  fmt.Println()
+  fmt.Fprintf(w, "Endpoint Hit Delete Article") // check if the endpoint is hitted
 
   for index, article := range Articles {
     if article.Id == id {
       Articles = append(Articles[:index], Articles[index+1:]...)
+    }
+  }
+}
+
+func updateOneArticle(w http.ResponseWriter, r *http.Request) {
+  reqBody, _ := ioutil.ReadAll(r.Body) // I/O utility import the io/ioutil to get all body from the request
+  fmt.Fprintf(w, "Endpoint Hit Update Article")
+  vars := mux.Vars(r)
+  id := vars["id"]
+  var updatedArticle Article
+  json.Unmarshal(reqBody, &updatedArticle)
+
+  for index, article := range Articles {
+    if article.Id == id {
+      article.Title = updatedArticle.Title      // assign the value from updatedArticle into article variables
+      article.Desc = updatedArticle.Desc 
+      article.Content = updatedArticle.Content 
+      Articles[index] = article
+      json.NewEncoder(w).Encode(article)        // return  
     }
   }
 }
@@ -72,6 +92,7 @@ func handleRequests() {
   myRouter.HandleFunc("/api/article/{id}", returnOneArticle) // get the one variables
   myRouter.HandleFunc("/api/create-article", createOneArticle).Methods("POST") // add the Methods POST
   myRouter.HandleFunc("/api/delete-article/{id}", deleteOneArticle).Methods("DELETE") // add the delete functions
+  myRouter.HandleFunc("/api/update-article/{id}", updateOneArticle).Methods("PUT") // add the update functions
   log.Fatal(http.ListenAndServe(":8081", myRouter))
 }
 
